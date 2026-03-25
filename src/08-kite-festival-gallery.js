@@ -80,20 +80,136 @@
  */
 export function renderKiteCard(kite) {
   // Your code here
+  if (!kite || !kite.name || !kite.color || !kite.size || !kite.maker || !kite.image) {
+    return null
+  }
+
+  const { name, color, size, maker, image } = kite
+
+  const divContainer = document.createElement("div")
+  divContainer.classList.add("kite-card")
+
+  const imgEle = document.createElement("img")
+  imgEle.src = image
+  imgEle.alt = name
+
+  const h3 = document.createElement("h3")
+  h3.classList.add("kite-name")
+  h3.textContent = name
+
+  const p1 = document.createElement("p")
+  p1.classList.add("kite-maker")
+  p1.textContent = `by ${maker}`
+
+  const p2 = document.createElement("p")
+  p2.classList.add("kite-info")
+  p2.textContent = `${size} - ${color}`
+
+  divContainer.append(imgEle, h3, p1, p2)
+
+  return divContainer
+
+
 }
 
 export function renderGallery(container, kites) {
   // Your code here
+
+
+  if (!container || !Array.isArray(kites)) {
+    return -1
+  }
+  container.innerHTML = ""
+
+  let count = 0
+  kites.forEach((kite) => {
+
+    const card = renderKiteCard(kite)
+
+    if (card) {
+      container.append(card)
+      count++
+    }
+  })
+
+  return count
+
 }
 
 export function filterKites(container, kites, filterFn) {
   // Your code here
+  if (!container || !Array.isArray(kites) || typeof filterFn !== "function") {
+    return -1
+  }
+
+  container.innerHTML = ''
+
+  const filteredKites = kites.filter(filterFn)
+
+  let count = 0
+
+  filteredKites.forEach((kite) => {
+
+    const card = renderKiteCard(kite)
+    if (card) {
+      container.append(card)
+      count++
+    }
+  })
+
+  return count
 }
 
 export function sortAndRender(container, kites, sortField, order) {
   // Your code here
+
+  if (!container || !Array.isArray(kites)) {
+    return []
+  }
+
+  const orderOfSorting = order === "desc" ? order : "asc"
+
+
+  const copyKites = [...kites].sort((a, b) => {
+    const valA = a[sortField]
+    const valB = b[sortField]
+
+    if (typeof valA === "string" && typeof valB === "string") {
+      return orderOfSorting === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA)
+    }
+
+    return orderOfSorting === 'asc' ? valA - valB : valB - valA
+  })
+
+
+
+  copyKites.forEach((kite) => {
+    const card = renderKiteCard(kite)
+
+    if (card) {
+      container.append(card)
+    }
+  })
+
+  return copyKites
+
+
 }
 
 export function renderEmptyState(container, message) {
   // Your code here
+  if (!container) return false
+
+  const containerChildList = container.children
+
+  if (containerChildList.length === 0) {
+    const p1 = document.createElement("p")
+    p1.className = "empty-state"
+    p1.textContent = message
+
+    container.append(p1)
+    return true
+  }
+
+  return false
 }
